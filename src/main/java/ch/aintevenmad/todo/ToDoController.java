@@ -2,9 +2,8 @@ package ch.aintevenmad.todo;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 public class ToDoController {
@@ -14,49 +13,42 @@ public class ToDoController {
         this.repository = repository;
     }
 
-    @GetMapping("/todo")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public Collection<ToDo> allToDo() {
-        return new ArrayList<>(repository.findAll());
+    @GetMapping("/todos")
+    List<ToDo> all() {
+        return repository.findAll();
     }
 
-    @GetMapping("/first")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public ToDo firstToDo() {
-        return repository.findAll().get(0);
+    @PostMapping("/todos")
+    ToDo newToDo(@RequestBody ToDo newToDo) {
+        return repository.save(newToDo);
     }
 
-    @GetMapping("/delete")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public void deleteToDo(ToDo toDo) {
-        repository.delete(toDo);
+    @GetMapping("/todos/{id}")
+    ToDo one(@PathVariable Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ToDoNotFoundException(id));
     }
 
-    @GetMapping("/add")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public ToDo addToDO(String taskName, String extraNote) {
-        Date date = new Date();
-        ToDo toDo = new ToDo(taskName, date, extraNote, false);
-        repository.save(toDo);
-        return toDo;
+    @PutMapping("/todos/{id}")
+    ToDo replaceToDo(@RequestBody ToDo newToDo, @PathVariable Long id) {
+
+        return repository.findById(id)
+                .map(toDo -> {
+                    toDo.setTaskName(newToDo.getTaskName());
+                    toDo.setDueDate(newToDo.getDueDate());
+                    toDo.setExtraNote(newToDo.getExtraNote());
+                    toDo.setTaskCompleted(newToDo.getTaskCompleted());
+                    return repository.save(toDo);
+                })
+                .orElseGet(() -> {
+                    newToDo.setId(id);
+                    return repository.save(newToDo);
+                });
     }
 
-    @GetMapping("/countcompletedtasks")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public int countCompletedTasks() {
-        return repository.findByTaskCompletedIsTrue().size();
-    }
-
-    @GetMapping("/completedtasks")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public Collection<ToDo> completedTasks() {
-        return repository.completedTasks();
-    }
-
-    @GetMapping("/incompletetasks")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public Collection<ToDo> uncompletedTasks() {
-        return repository.findByTaskCompletedIsFalse();
+    @DeleteMapping("/todos/{id}")
+    void deleteToDo(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 
     @GetMapping("/deleteall")
@@ -65,7 +57,7 @@ public class ToDoController {
         repository.deleteAll();
     }
 
-    @GetMapping("/loaddefaults")
+    @GetMapping("/init")
     @CrossOrigin(origins = "http://localhots:4200")
     public void createDefaults() {
         Date date = new Date();
@@ -73,12 +65,6 @@ public class ToDoController {
         repository.save(new ToDo("GMDU", date, false));
         repository.save(new ToDo("INMA", date, true));
         repository.save(new ToDo("SLGP", date, false));
-    }
-
-    @GetMapping("/delete/{id}")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public void deleteByID(@PathVariable long id){
-        repository.deleteById(id);
     }
 
 

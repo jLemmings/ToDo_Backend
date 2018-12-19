@@ -18,6 +18,11 @@ public class ToDo {
     private String extraNote;
     private boolean taskCompleted;
 
+    public ToDo(String taskName, boolean taskCompleted) {
+        this.taskName = taskName;
+        this.taskCompleted = taskCompleted;
+    }
+
     public ToDo(String taskName, Date dueDate, boolean taskCompleted) {
         this.taskName = taskName;
         this.dueDate = dueDate;
@@ -28,5 +33,9 @@ public class ToDo {
         this.dueDate = dueDate;
         this.extraNote = extraNote;
         this.taskCompleted = taskCompleted;
+    }
+
+    public boolean getTaskCompleted() {
+        return taskCompleted;
     }
 }
