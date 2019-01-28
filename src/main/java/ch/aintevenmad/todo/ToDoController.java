@@ -2,7 +2,7 @@ package ch.aintevenmad.todo;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,12 +60,10 @@ public class ToDoController {
     @GetMapping("/init")
     @CrossOrigin(origins = "http://localhots:4200")
     public void createDefaults() {
-        Date date = new Date();
+        LocalDate date = LocalDate.now();
         repository.save(new ToDo("PMB", date, false));
         repository.save(new ToDo("GMDU", date, false));
         repository.save(new ToDo("INMA", date, true));
         repository.save(new ToDo("SLGP", date, false));
     }
-
-
 }

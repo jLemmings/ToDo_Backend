@@ -10,8 +10,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 
 
 @SpringBootApplication
@@ -23,8 +23,8 @@ public class ToDoApplication {
     @Bean
     ApplicationRunner init(ToDoRepository repository) {
         return args -> {
-            Date date = new Date();
-            repository.save(new ToDo("PMB", date, "Stuy you lazy ass!", false));
+            LocalDate date = LocalDate.now();
+            repository.save(new ToDo("PMB", date, "Study you lazy ass!", false));
             repository.save(new ToDo("GMDU", date, "You have done it all wrong", true));
             repository.save(new ToDo("INMA", date, "Do something else", true));
             repository.save(new ToDo("SLGP", date, "Do this", false));

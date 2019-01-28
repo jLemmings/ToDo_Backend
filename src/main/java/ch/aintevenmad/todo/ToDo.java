@@ -1,9 +1,17 @@
 package ch.aintevenmad.todo;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import javax.persistence.*;
-import java.util.Date;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -14,7 +22,9 @@ public class ToDo {
     private long id;
     private @NonNull
     String taskName;
-    private Date dueDate;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate dueDate;
     private String extraNote;
     private boolean taskCompleted;
 
@@ -23,12 +33,12 @@ public class ToDo {
         this.taskCompleted = taskCompleted;
     }
 
-    public ToDo(String taskName, Date dueDate, boolean taskCompleted) {
+    public ToDo(String taskName, LocalDate dueDate, boolean taskCompleted) {
         this.taskName = taskName;
         this.dueDate = dueDate;
         this.taskCompleted = taskCompleted;
     }
-    public ToDo(String taskName, Date dueDate, String extraNote, boolean taskCompleted){
+    public ToDo(String taskName, LocalDate dueDate, String extraNote, boolean taskCompleted){
         this.taskName = taskName;
         this.dueDate = dueDate;
         this.extraNote = extraNote;
